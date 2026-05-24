@@ -75,18 +75,27 @@ public class Main {
 
 You can register modules using Java ServiceLoader so they are discovered automatically by `ContainerRunner.start(...)`.
 
-1. Create a module implementation:
+1. Create a module implementation and configure bindings:
 
 ```java
 package com.example;
 
 import io.abc.shared.di.ConfigurableContext;
 import io.abc.shared.di.ConfigurableModule;
+import io.abc.shared.di.Scope;
 
 public class GreetingModule implements ConfigurableModule {
     @Override
     public void configure(ConfigurableContext context) {
-        context.bind(GreetingService.class, DefaultGreetingService.class, "greetingService");
+        context.bind(GreetingService.class, DefaultGreetingService.class, "greetingService")
+            .scope(Scope.SINGLETON)
+            .usePostConstruct(service -> service.warmUp())
+            .usePreDestroy(service -> service.shutdown())
+            .usePostContainerInitialized(service -> service.onContainerReady());
+
+        context.bind(TimeProvider.class, SystemTimeProvider.class, "timeProvider")
+            .factory(SystemTimeProvider::new)
+            .scope(Scope.PROTOTYPE);
     }
 }
 ```
