@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ContainerStarterTest {
+class ContainerRunnerTest {
 
     @Test
     void start_withModules_returnsContextAndResolvesBean() {
-        final AppContext context = ContainerStarter.start(List.of(new TestModule()), new String[]{"arg"});
+        final AppContext context = ContainerRunner.start(List.of(new TestModule()), new String[]{"arg"});
 
         final TestService service = context.get(TestService.class);
 
@@ -26,7 +26,7 @@ class ContainerStarterTest {
 
     @Test
     void startContainer_withModules_startsAndCanShutDown() {
-        final Container container = ContainerStarter.startContainer(List.of(new TestModule()), null);
+        final Container container = ContainerRunner.startContainer(List.of(new TestModule()), null);
 
         assertNotNull(container);
 
@@ -37,12 +37,12 @@ class ContainerStarterTest {
 
     @Test
     void start_withNullModules_throwsException() {
-        assertThrows(NullPointerException.class, () -> ContainerStarter.start((List<ConfigurableModule>) null, new String[0]));
+        assertThrows(NullPointerException.class, () -> ContainerRunner.start((List<ConfigurableModule>) null, new String[0]));
     }
 
     @Test
     void startContainer_withNullModules_throwsException() {
-        assertThrows(NullPointerException.class, () -> ContainerStarter.startContainer((List<ConfigurableModule>) null, new String[0]));
+        assertThrows(NullPointerException.class, () -> ContainerRunner.startContainer((List<ConfigurableModule>) null, new String[0]));
     }
 
     interface TestService {

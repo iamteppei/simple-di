@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 
-public final class ContainerStarter {
+public final class ContainerRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContainerStarter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContainerRunner.class);
 
-    private ContainerStarter() {
+    private ContainerRunner() {
         // utility class
     }
 

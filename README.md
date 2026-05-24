@@ -2,7 +2,7 @@
 
 A lightweight, modular dependency injection container for Java.
 
-[![Build](https://img.shields.io/badge/build-passing-brightgreen)](#build-and-test)
+[![CI](https://github.com/iamteppei/simple-di/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/iamteppei/simple-di/actions/workflows/ci-cd.yml)
 [![Java](https://img.shields.io/badge/java-21-blue)](#requirements)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
@@ -60,12 +60,12 @@ Coverage reports:
 Typical bootstrap flow:
 
 ```java
-import io.abc.platform.container.pure.impl.ContainerStarter;
+import io.abc.platform.container.pure.impl.ContainerRunner;
 import io.abc.shared.di.AppContext;
 
 public class Main {
     public static void main(String[] args) {
-        AppContext context = ContainerStarter.start(args);
+        AppContext context = ContainerRunner.start(args);
         // Resolve and use your beans from context.
     }
 }
@@ -73,7 +73,7 @@ public class Main {
 
 ### Quick Start with ServiceLoader Modules
 
-You can register modules using Java ServiceLoader so they are discovered automatically by `ContainerStarter.start(...)`.
+You can register modules using Java ServiceLoader so they are discovered automatically by `ContainerRunner.start(...)`.
 
 1. Create a module implementation:
 
@@ -104,12 +104,12 @@ com.example.GreetingModule
 3. Start the container:
 
 ```java
-import io.abc.platform.container.pure.impl.ContainerStarter;
+import io.abc.platform.container.pure.impl.ContainerRunner;
 import io.abc.shared.di.AppContext;
 
 public class Main {
     public static void main(String[] args) {
-        AppContext context = ContainerStarter.start(args);
+        AppContext context = ContainerRunner.start(args);
         // GreetingModule is auto-loaded from META-INF/services
     }
 }

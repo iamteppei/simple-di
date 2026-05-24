@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ModuleLoaderAndContainerStarterTest {
+class ModuleLoaderAndContainerRunnerTest {
 
     @Test
     void moduleLoader_loadAll_readsServiceLoaderEntries() {
@@ -27,7 +27,7 @@ class ModuleLoaderAndContainerStarterTest {
 
     @Test
     void containerStarter_start_withoutExplicitModules_loadsModulesFromServiceLoader() {
-        final AppContext context = ContainerStarter.start();
+        final AppContext context = ContainerRunner.start();
 
         assertNotNull(context);
         assertEquals("auto", context.get(AutoService.class).name());
@@ -36,7 +36,7 @@ class ModuleLoaderAndContainerStarterTest {
 
     @Test
     void containerStarter_start_withArgs_worksWithServiceLoaderModules() {
-        final AppContext context = ContainerStarter.start(new String[]{"--dev"});
+        final AppContext context = ContainerRunner.start(new String[]{"--dev"});
 
         assertNotNull(context);
         assertEquals("auto", context.get(AutoService.class).name());
@@ -44,7 +44,7 @@ class ModuleLoaderAndContainerStarterTest {
 
     @Test
     void containerStarter_startContainer_withArgs_returnsRunningContainer() {
-        final io.abc.shared.di.Container container = ContainerStarter.startContainer(new String[]{"--prod"});
+        final io.abc.shared.di.Container container = ContainerRunner.startContainer(new String[]{"--prod"});
 
         assertNotNull(container);
         container.down();
