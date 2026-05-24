@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_LEVEL_ROOT" value="INFO"/>
+    <property name="LOG_LEVEL_APP" value="INFO"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="io.abc" level="${LOG_LEVEL_APP}" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="${LOG_LEVEL_ROOT}">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
