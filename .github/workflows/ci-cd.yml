@@ -48,7 +48,7 @@ jobs:
 
       - name: SonarQube Scan
         if: env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != '' && env.SONAR_PROJECT_KEY != ''
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
@@ -57,6 +57,11 @@ jobs:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.organization=${{ env.SONAR_ORG }}
+            -Dsonar.sources=simple-di-api/src/main/java,simple-di-core/src/main/java
+            -Dsonar.tests=simple-di-core/src/test/java
+            -Dsonar.java.binaries=simple-di-api/build/classes/java/main,simple-di-core/build/classes/java/main
+            -Dsonar.java.test.binaries=simple-di-core/build/classes/java/test
+            -Dsonar.coverage.jacoco.xmlReportPaths=simple-di-core/build/reports/jacoco/test/jacocoTestReport.xml
 
       - name: Upload test reports
         if: always()
