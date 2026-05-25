@@ -115,11 +115,13 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Publish to Maven repository
+      - name: Publish to Maven Central
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
           RELEASE_VERSION: ${{ github.ref_name }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         run: |
           VERSION="${RELEASE_VERSION#v}"
           ./gradlew --no-daemon clean publish -PprojectVersion="$VERSION"

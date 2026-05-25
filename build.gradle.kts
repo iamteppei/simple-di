@@ -10,6 +10,12 @@ val projectVersion = providers.gradleProperty("projectVersion").orElse("0.1.0-SN
 val mavenRepoUrl = providers.gradleProperty("mavenRepoUrl")
     .orElse("https://maven.pkg.github.com/iamteppei/simple-di")
     .get()
+val sonatypeUsername = providers.gradleProperty("sonatypeUsername")
+    .orElse(System.getenv("SONATYPE_USERNAME") ?: "")
+    .get()
+val sonatypePassword = providers.gradleProperty("sonatypePassword")
+    .orElse(System.getenv("SONATYPE_PASSWORD") ?: "")
+    .get()
 
 allprojects {
     group = projectGroup
@@ -76,6 +82,15 @@ subprojects {
                     password = providers.gradleProperty("mavenRepoPassword")
                         .orElse(System.getenv("GITHUB_TOKEN") ?: "")
                         .get()
+                }
+            }
+
+            maven {
+                name = "MavenCentral"
+                url = uri("https://central.sonatype.com/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = sonatypeUsername
+                    password = sonatypePassword
                 }
             }
         }
