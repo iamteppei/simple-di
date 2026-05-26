@@ -1,12 +1,9 @@
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.jvm.toolchain.JavaLanguageVersion
+import com.vanniktech.maven.publish.DeploymentValidation
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
 
 val javaVersion = providers.gradleProperty("javaVersion").orElse("21").get().toInt()
 val projectGroup = providers.gradleProperty("projectGroup").orElse("io.github.iamteppei").get()
-val projectVersion = providers.gradleProperty("projectVersion").orElse("0.1.0-SNAPSHOT").get()
+val projectVersion = providers.gradleProperty("projectVersion").orElse("2026.05-04").get()
 val mavenRepoUrl = providers.gradleProperty("mavenRepoUrl")
     .orElse("https://maven.pkg.github.com/iamteppei/simple-di")
     .get()
@@ -17,18 +14,25 @@ val sonatypePassword = providers.gradleProperty("sonatypePassword")
     .orElse(System.getenv("SONATYPE_PASSWORD") ?: "")
     .get()
 
+// gradle requires plugin version to be defined globally
+plugins {
+    id("com.vanniktech.maven.publish") version "0.36.0" apply false
+}
+
 allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
     group = projectGroup
     version = projectVersion
 }
 
 subprojects {
-    pluginManager.apply("java-library")
-    pluginManager.apply("maven-publish")
 
-    repositories {
-        mavenCentral()
-    }
+    pluginManager.apply("java-library")
+    pluginManager.apply("com.vanniktech.maven.publish")
 
     extensions.configure<JavaPluginExtension> {
         toolchain {
@@ -63,36 +67,38 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    extensions.configure<PublishingExtension> {
-        publications {
-            create<MavenPublication>("mavenJava") {
-                from(components["java"])
-                artifactId = project.name
+    extensions.configure<MavenPublishBaseExtension> {
+        coordinates(projectGroup, project.name, projectVersion)
+
+        publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.NONE)
+        signAllPublications() // request for release
+
+        // configure pom
+        pom {
+            name.set(project.name)
+            description.set("A simple dependency injection library")
+            inceptionYear.set("2026")
+            url.set("https://github.com/iamteppei/simple-di")
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+            developers {
+                developer {
+                    id.set("iamteppei")
+                    name.set("Tam Nguyen")
+                    url.set("https://github.com/iamteppei/")
+                }
+            }
+            scm {
+                url.set("https://github.com/iamteppei/simple-di")
+                connection.set("scm:git:git://github.com/iamteppei/simple-di.git")
+                developerConnection.set("scm:git:ssh://git@github.com/iamteppei/simple-di.git")
             }
         }
 
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri(mavenRepoUrl)
-                credentials {
-                    username = providers.gradleProperty("mavenRepoUsername")
-                        .orElse(System.getenv("GITHUB_ACTOR") ?: "")
-                        .get()
-                    password = providers.gradleProperty("mavenRepoPassword")
-                        .orElse(System.getenv("GITHUB_TOKEN") ?: "")
-                        .get()
-                }
-            }
-
-            maven {
-                name = "MavenCentral"
-                url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = sonatypeUsername
-                    password = sonatypePassword
-                }
-            }
-        }
     }
 }
